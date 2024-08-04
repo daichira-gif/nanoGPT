@@ -10,14 +10,25 @@ nanoGPTの解説記事
 https://qiita.com/shibu_phys/items/c69665912eb60fd87e4c#43-block-class
 
 """
-
+# 処理に必要なライブラリのインポート
+# math: 数学関数を提供する標準ライブラリ
 import math
+
+# inspect: オブジェクトのソースコードやメタデータを取得するための標準ライブラリ
 import inspect
+
+# dataclass: データクラスを簡単に定義するための標準ライブラリ
 from dataclasses import dataclass
 
+# torch: 機械学習とディープラーニングのためのライブラリ
 import torch
+
+# torch.nn: ニューラルネットワークの構築に使用されるモジュール
 import torch.nn as nn
+
+# torch.nn.functional: ニューラルネットワークの関数を提供するモジュール
 from torch.nn import functional as F
+
 
 #レイヤー正規化を実装したクラス
 """
@@ -29,14 +40,29 @@ from torch.nn import functional as F
         具体的には、入力ベクトルの各要素から平均を引き、標準偏差で割ることで正規化を行います。
 """
 class LayerNorm(nn.Module):
-    #biasオプションによってバイアスを持つかどうかを指定
-    """ LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False """
+    #biasオプションによって、バイアスを持つかどうかを指定する。
+    """ 
+    LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False 
+    LayerNormalization の解説
+    　https://data-analytics.fun/2020/07/16/understanding-layer-normalization/
+    
+    """
 
     def __init__(self, ndim, bias):
         super().__init__()
         self.weight = nn.Parameter(torch.ones(ndim))
         self.bias = nn.Parameter(torch.zeros(ndim)) if bias else None
 
+    """
+    次のコードでは、入力テンソルに対してレイヤーノーマライゼーションを適用し、スケールとバイアスを調整して出力します。
+    F.layer_norm関数を使用して、入力テンソルinputに対してレイヤーノーマライゼーションを適用します。
+    input: ノーマライゼーションを適用する入力テンソル。
+    self.weight.shape: ノーマライゼーションの形状を指定します。
+    self.weight: ノーマライゼーションのスケールパラメータ。
+    self.bias: ノーマライゼーションのバイアスパラメータ（存在する場合）。
+    1e-5: ノーマライゼーションの安定化（数値の精度を保ちながら計算を安定させる）のための小さな値（イプシロン）。
+    
+    """
     def forward(self, input):
         return F.layer_norm(input, self.weight.shape, self.weight, self.bias, 1e-5)
 
